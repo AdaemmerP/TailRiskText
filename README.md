@@ -13,7 +13,6 @@ all the time series data based on the basis of textual data. The file 'sentiment
 For example, the folder 'K80' contains all calculated data based on K=80 topics. The file 
 'ctm_80_10_topicsonlymonthly.csv' corresponds to a CTM model with 80 topics and the top 10k words based on tf-idf.
 The top words for each topic model are also included in the subfolders. 
-  
 
 ## Code_Figures
 This folder contains all R codes to replicate each Figure in the paper. The scripts are self-explanatory. 
@@ -36,4 +35,3 @@ This folder contains all Matlab scripts and data to replicate the empirical resu
 This folder contains all empirical results based on the code in the folder "Code_Matlab".
 
 
-# TailRiskText
