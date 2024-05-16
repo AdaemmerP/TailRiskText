@@ -3,7 +3,6 @@ This repository contains the source code and data for the paper **Forecasting Ma
 Please cite the paper when using the code and data from this repository. 
 We used newspaper articles from *The New York Times* and *The Washington Post*. 
 The data were collected using the online tool [NexisUni](https://www.lexisnexis.com/en-int/products/nexis-uni). 
-Due to licensing agreements, we do not upload the newspaper articles itself, but all computed time series derived from it. 
 The vintage data we used are publicly available [here](https://research.stlouisfed.org/econ/mccracken/fred-databases/).
 
 ## Data
