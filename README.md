@@ -13,6 +13,9 @@ For example, the folder 'K80' contains all calculated data based on K=80 topics.
 'ctm_80_10_topicsonlymonthly.csv' corresponds to a CTM model with 80 topics and the top 10k words based on tf-idf.
 The top words for each topic model are also included in the subfolders. 
 
+## Code_Text
+This folder contains an R script to estimate the topic models and from it the derived topic time series.
+
 ## Code_Figures
 This folder contains all R codes to replicate each Figure in the paper. The scripts are self-explanatory. 
 At the beginning of each script you have to set the appropriate path, which is explained at the beginning. 
