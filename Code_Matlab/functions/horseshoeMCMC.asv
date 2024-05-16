@@ -1,0 +1,128 @@
+function Output= horseshoeMCMC(Input)
+
+%number of burn in and nummer of draws to keep
+N=Input.nsims;
+R=1000;
+
+
+X=Input.zin(:,:);
+y=Input.yt;
+Xout=Input.zout(:,:);
+[n,K]=size(X);
+
+slice=1;
+rue=0;
+delta=0.0000;
+
+% Prior distributions
+alpha0=0.000;
+delta0=0.000;
+B=1;
+A=1;
+
+
+
+%%% save stuff
+beta=zeros(K,R+N);
+sigma2=zeros(R+N,1);
+lambda=zeros(R+N,K);
+v=zeros(R+N,K);
+tau=zeros(R+N,1);
+xi=zeros(R+N,1);
+
+% Initialize
+B0=speye(K)*0.001; %use a "small variance" (e.g. 0.0001) -> informativ prior 
+invB0=inv(B0);
+tau(1,:)=1;
+lambda(1,:)=ones(1,K);
+sigma2(1,1)=1;
+alpha1=alpha0+n/2;
+
+
+%%gibbs sampler
+
+for i=2:R+N
+
+
+  
+  delta1=delta0+(y-X*beta(:,i-1))'*(y-X*beta(:,i-1))/2;  
+  sigma2(i,1)=1/gamrnd(alpha1,1/delta1,1);
+ 
+
+if rue==1
+    
+  B1=((1/sigma2(i,1))*X'*X+ invB0);
+  
+  b1=B1\((1/sigma2(i,1))*X'*y);%+solve(B0)*b0
+ 
+
+  B1chol=chol(B1,'lower');
+  beta(:,i)= b1 +B1chol'\randn(K,1); %(range{ii},i)
+
+else
+    
+  Xtilde=(1/sqrt(  sigma2(i,1)))*X;
+  ytilde=y*(1/sqrt(  sigma2(i,1)));
+  V=  diag(B0.^.5).*randn(K,1);
+  q=randn(n,1);
+  w=Xtilde*V+q;
+  ind=diag(B0)>delta;
+  Xtildeadj=Xtilde(:,ind);
+  B1=(speye(n)+Xtildeadj*B0(ind,ind)*Xtildeadj');
+  u=B1\(ytilde-w);  
+  beta(:,i)=B0(:,ind)*Xtildeadj'*u+V;
+end
+
+if slice==0
+ for j = 1:K
+    v(i,j)=1/gamrnd(1,1/(1/B^2+1/lambda(i-1,j)),1);%v[i,]
+    lambda(i,j)=1/gamrnd(1,1/(1/v(i,j)+(beta(j,i)^2)/(2*tau(i-1,1)) ),1) ;% lambda[i,]
+ end
+
+  xi(i,1)=1/gamrnd(1,1/(1/A^2+1/tau(i-1,1) ),1);
+
+  tau(i,1)=1/gamrnd((K+1)/2,1/( 1/xi(i,1)+0.5*sum(beta(:,i)'.^2 ./lambda(i,:)) ),1);
+  invB0(1:(K+1):end)= ((1./(lambda(i,:)*tau(i,1))));
+  B0(1:(K+1):end)=(((lambda(i,:)*tau(i,1))))+0.0001;
+  
+elseif slice==1
+  %% slice
+
+      %% update lambda_j's in a block using slice sampling %%
+    eta = 1./(lambda(i,:).^2); 
+    upsi = unifrnd(0,1./(1+eta));
+    tempps = beta(:,i)'.^2/(2*tau(i,1)^2); 
+    ub = (1-upsi)./upsi;
+
+    % now sample eta from exp(tempv) truncated between 0 & upsi/(1-upsi)
+    Fub = 1 - exp(-tempps.*ub); % exp cdf at ub 
+    Fub(Fub < (1e-4)) = 1e-4;  % for numerical stability
+    up = unifrnd(0,Fub); 
+    eta = -log(1-up)./tempps; 
+    lambda(i,:) = 1./sqrt(eta);
+
+    %% update tau %%
+    tempt = sum((beta(:,i)'./lambda(i,:)).^2)/(2); 
+    et = 1/tau^2; 
+    utau = unifrnd(0,1/(1+et));
+    ubt = (1-utau)/utau; 
+    Fubt = gamcdf(ubt,(p+1)/2,1/tempt); 
+    Fubt = max(Fubt,1e-8); % for numerical stability
+    ut = unifrnd(0,Fubt); 
+    et = gaminv(ut,(p+1)/2,1/tempt); 
+    tau = 1/sqrt(et);
+
+  invB0(1:(K+1):end)= ((1./(lambda(i,:)*tau(i,1))));
+  B0(1:(K+1):end)=(((lambda(i,:)*tau(i,1))));
+
+end
+  
+end
+
+%delete burn-in period
+beta = beta(:,(R+1):(R+N));
+sigma2 = sigma2((R+1):(R+N));
+ %plot(mean(beta,2))
+normrand=randn(1,N);
+
+Output.ydraws=Xout*beta+ sqrt(sigma2').*  normrand;
