@@ -3,6 +3,7 @@ clc;
 
 addpath('functions')
 addpath('data')
+addpath('Historical FRED-MD Vintages Final')
 
 
 %% Choices
@@ -15,7 +16,7 @@ selectVariable=1;% 1:CPI 2:Indpro 3:umcs 4:employment
 fred=0;% if 1 use fred data
 text=1;%0: use no text data 1:use text data with 80 topics 2:use text data with 80 topics combined with sentiment
 hfore=2;% 1:nowcast 2:one step ahead forecast
-ylag=12;%select number of lags for the depenend variables
+ylag=12;%select number of lags for the dependend variables
 xlag=1; %select the number of lags for the predictors must be >0
 
 
@@ -42,17 +43,7 @@ end
 % 1999:08 first out of sample forecast 
 
 startsample_month=258;
-
-
-addpath('Historical FRED-MD Vintages Final')
-
-
-
-
 timelag=0;%do not change
-
-
-
 %%
 Input.delta=1;% 1: constant variance <1: discouting
 Input.epsilon=0.0001;
