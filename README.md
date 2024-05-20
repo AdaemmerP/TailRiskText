@@ -14,7 +14,7 @@ For example, the folder 'K80' contains all calculated data based on K=80 topics.
 The top words for each topic model are also included in the subfolders. 
 
 ## Code_Text
-This folder contains an R script to estimate the topic models and from it the derived topic time series.
+This folder contains an R script to estimate the topic models and from it the derived topic time series. Due to licence agreements, we are not allowed to share the textual data, so this script is not executable.
 
 ## Code_Figures
 This folder contains all R codes to replicate each Figure in the paper. The scripts are self-explanatory. 
