@@ -1,4 +1,6 @@
 library(tidyverse)
+library(conflicted) 
+conflict_prefer("filter", "dplyr")
 
 # Set path to folder 'Results'
 # setwd("")
